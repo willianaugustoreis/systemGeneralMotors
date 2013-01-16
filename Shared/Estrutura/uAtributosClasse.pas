@@ -1,5 +1,6 @@
 unit uAtributosClasse;
-//{$RTTI EXPLICIT METHOD([])}
+{$RTTI EXPLICIT METHODS([vcPublic, vcPublished]) PROPERTIES([vcPublic, vcPublished]) FIELDS([vcProtected])}
+{$M+}
 
 interface
 
@@ -17,7 +18,7 @@ type
   FFieldName: string;
   public
     constructor Create(AFieldName: string);
-    property TableName: string read FFieldName;
+    property FieldName: string read FFieldName;
   end;
 implementation
 

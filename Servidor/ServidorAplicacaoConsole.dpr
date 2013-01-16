@@ -5,7 +5,9 @@ program ServidorAplicacaoConsole;
 uses
   SysUtils,
   uSocketServidor in 'Comunicacao\uSocketServidor.pas',
-  uAtributosClasse in '..\Shared\Estrutura\uAtributosClasse.pas';
+  uAtributosClasse in '..\Shared\Estrutura\uAtributosClasse.pas',
+  uCustomClass in '..\Shared\Estrutura\uCustomClass.pas',
+  uLayerDBClass in '..\Shared\Estrutura\uLayerDBClass.pas';
 
 begin
   try
