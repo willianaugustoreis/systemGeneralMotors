@@ -1,5 +1,5 @@
 unit uAtributosClasse;
-{$RTTI EXPLICIT METHODS([vcPublic, vcPublished]) PROPERTIES([vcPublic, vcPublished]) FIELDS([vcProtected])}
+{$RTTI EXPLICIT METHODS([vcPublic, vcPublished]) PROPERTIES([vcPublic, vcPublished]) FIELDS([vcProtected, vcPublic])}
 {$M+}
 
 interface

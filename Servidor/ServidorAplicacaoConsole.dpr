@@ -6,8 +6,10 @@ uses
   SysUtils,
   uSocketServidor in 'Comunicacao\uSocketServidor.pas',
   uAtributosClasse in '..\Shared\Estrutura\uAtributosClasse.pas',
+  uCustomHeader in '..\Shared\Estrutura\uCustomHeader.pas',
   uCustomClass in '..\Shared\Estrutura\uCustomClass.pas',
-  uLayerDBClass in '..\Shared\Estrutura\uLayerDBClass.pas';
+  uClienteHeader in '..\Shared\Classes\Header\uClienteHeader.pas',
+  uClienteClass in '..\Shared\Classes\Classe\uClienteClass.pas';
 
 begin
   try
