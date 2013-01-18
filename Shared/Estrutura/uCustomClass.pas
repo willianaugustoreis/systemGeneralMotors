@@ -17,6 +17,8 @@ type
   end;
   TCustomClass = class(TCustomBase)
   strict private
+    FIsTransaction: Boolean;
+    FDMLQuery: TDBQuery;
     FMar: TJSONMarshal;  //Serializer
     FUnMar: TJSONUnMarshal;
     function GenerateInsertSQL: string;
@@ -26,6 +28,10 @@ type
     procedure Insert(AQuery: TDBQuery);
     procedure Update(AQuery: TDBQuery);
     procedure Delete(AQuery: TDBQuery);
+
+
+    procedure InitializeDMLQuery(AQueryTransaction: TDBQuery);
+    procedure FinalizeDMLQuery(var AQueryTransaction: TDBQuery);
   public
     constructor Create;
     destructor Destroy;
@@ -42,7 +48,7 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils, TypInfo;
 
 { TLayerDBClass<T> }
 
@@ -50,6 +56,7 @@ constructor TCustomClass.Create;
 begin
   FMar := TJSONMarshal.Create;  //Serializer
   FUnMar := TJSONUnMarshal.Create;
+  FIsTransaction:= False;
 end;
 
 procedure TCustomClass.Delete(AQuery: TDBQuery);
@@ -61,6 +68,15 @@ destructor TCustomClass.Destroy;
 begin
   FreeAndNil(FMar);
   FreeAndNil(FUnMar);
+end;
+
+procedure TCustomClass.FinalizeDMLQuery(var AQueryTransaction: TDBQuery);
+begin
+  if not FIsTransaction then
+  begin
+//    FDMLQuery.EndTransaction;
+    FDMLQuery.Free;
+  end;
 end;
 
 function TCustomClass.GenerateDeleteSQL: string;
@@ -232,6 +248,18 @@ begin
   end;
 end;
 
+procedure TCustomClass.InitializeDMLQuery(AQueryTransaction: TDBQuery);
+begin
+  FIsTransaction := AQueryTransaction <> nil;
+  if FIsTransaction then
+    FDMLQuery := AQueryTransaction
+  else
+  begin
+//    FDMLQuery := TDBManipulation.Create;
+//    FDMLQuery.BeginTransaction;
+  end;
+end;
+
 procedure TCustomClass.Insert;
 begin
   GenerateInsertSQL;
@@ -243,8 +271,51 @@ begin
 end;
 
 procedure TCustomClass.PaserStream(AMemoryStream: TMemoryStream);
+var
+  LRttiContext: TRttiContext;
+  LRttiType: TRttiType;
+  LRttiFields: TArray<TRttiField>;
+  LRttiField: TRttiField;
+  iField: Integer;
+  LInteger: Integer;
+  LInt64: Int64;
+  LFloat: Extended;
+  LString: string;
 begin
+  LRttiContext := TRttiContext.Create;
+  LRttiType := LRttiContext.GetType(Self.ClassType);
+  LRttiFields := LRttiType.GetFields;
+  for iField := 0 to Length(LRttiFields) - 1 do
+  begin
+    LRttiField := LRttiFields[iField];
 
+    case LRttiField.FieldType.TypeKind of
+      tkInteger:
+      begin
+        AMemoryStream.Read(LInteger, SizeOf(LInteger));
+        LRttiField.SetValue(Self, LInteger);
+      end;
+      tkInt64, tkEnumeration:
+      begin
+        AMemoryStream.Read(LInt64, SizeOf(LInt64));
+        LRttiField.SetValue(Self, LInt64);
+      end;
+
+      tkFloat:
+      begin
+        AMemoryStream.Read(LFloat, SizeOf(LFloat));
+        LRttiField.SetValue(Self, LFloat);
+      end;
+
+      tkUString, tkDynArray, tkWString, tkString, tkWChar, tkChar, tkLString:
+      begin
+        AMemoryStream.Read(LInteger, SizeOf(LInteger));
+        SetLength(LString, LInteger);
+        AMemoryStream.Read(LString, LInteger);
+        LRttiField.SetValue(Self, LString);
+      end;
+    end;
+  end;
 end;
 
 procedure TCustomClass.Save(AQuery: TDBQuery);
@@ -258,9 +329,51 @@ begin
 end;
 
 function TCustomClass.ToStream: TMemoryStream;
+var
+  LRttiContext: TRttiContext;
+  LRttiType: TRttiType;
+  LRttiFields: TArray<TRttiField>;
+  LRttiField: TRttiField;
+  iField: Integer;
+  LInteger: Integer;
+  LInt64: Int64;
+  LFloat: Extended;
+  LString: string;
 begin
   Result := TMemoryStream.Create;
+  LRttiContext := TRttiContext.Create;
+  LRttiType := LRttiContext.GetType(Self.ClassType);
+  LRttiFields := LRttiType.GetFields;
+  for iField := 0 to Length(LRttiFields) - 1 do
+  begin
+    LRttiField := LRttiFields[iField];
 
+    case LRttiField.FieldType.TypeKind of
+      tkInteger:
+      begin
+        LInteger := LRttiField.GetValue(Self).AsInteger;
+        Result.Write(LInteger, SizeOf(LInteger))
+      end;
+      tkInt64, tkEnumeration:
+      begin
+        LInt64 := LRttiField.GetValue(Self).AsInt64;
+        Result.Write(LInt64, SizeOf(LInt64));
+      end;
+      tkFloat:
+      begin
+        LFloat := LRttiField.GetValue(Self).AsExtended;
+        Result.Write(LFloat, SizeOf(LFloat));
+      end;
+
+      tkUString, tkDynArray, tkWString, tkString, tkWChar, tkChar, tkLString:
+      begin
+        LString := LRttiField.GetValue(Self).AsString;
+        LInteger := Length(LString);
+        Result.Write(LInteger, SizeOf(LInteger));
+        Result.Write(LString, LInteger);
+      end;
+    end;
+  end;
 end;
 
 procedure TCustomClass.Update;

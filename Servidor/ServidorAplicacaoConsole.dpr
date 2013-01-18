@@ -11,7 +11,8 @@ uses
   uClienteHeader in '..\Shared\Classes\Header\uClienteHeader.pas',
   uClienteClass in '..\Shared\Classes\Classe\uClienteClass.pas',
   uCustomDBConnection in 'BancoDeDados\uCustomDBConnection.pas',
-  uSQLServerDBConnection in 'BancoDeDados\uSQLServerDBConnection.pas';
+  uSQLServerDBConnection in 'BancoDeDados\uSQLServerDBConnection.pas',
+  uCustomDBQuery in 'BancoDeDados\uCustomDBQuery.pas';
 
 begin
   try
