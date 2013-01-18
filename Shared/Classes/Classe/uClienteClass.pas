@@ -5,15 +5,15 @@ interface
 uses
   uCustomClass, uClienteHeader;
 type
-  TClienteClass = class(TCustomClass)
+  TClienteClass = class
   strict private
   FFields: TClienteHeader;
   protected
-    procedure Insert; override;
-    procedure Update; override;
+    procedure Insert;
+    procedure Update;
   public
     constructor Create(AClienteHeader: TClienteHeader);
-    procedure Save;override;
+    procedure Save;
 
   end;
 implementation
@@ -29,7 +29,6 @@ end;
 
 procedure TClienteClass.Insert;
 begin
-  inherited;
 
 end;
 
@@ -40,7 +39,6 @@ end;
 
 procedure TClienteClass.Update;
 begin
-  inherited;
 
 end;
 

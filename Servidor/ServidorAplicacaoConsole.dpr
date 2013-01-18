@@ -9,7 +9,9 @@ uses
   uCustomHeader in '..\Shared\Estrutura\uCustomHeader.pas',
   uCustomClass in '..\Shared\Estrutura\uCustomClass.pas',
   uClienteHeader in '..\Shared\Classes\Header\uClienteHeader.pas',
-  uClienteClass in '..\Shared\Classes\Classe\uClienteClass.pas';
+  uClienteClass in '..\Shared\Classes\Classe\uClienteClass.pas',
+  uCustomDBConnection in 'BancoDeDados\uCustomDBConnection.pas',
+  uSQLServerDBConnection in 'BancoDeDados\uSQLServerDBConnection.pas';
 
 begin
   try
