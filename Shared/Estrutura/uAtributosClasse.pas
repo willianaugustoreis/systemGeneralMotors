@@ -35,7 +35,7 @@ implementation
 
 constructor TAttrDBField.Create(AFieldName: string);
 begin
-  AFieldName := FFieldName;
+  FFieldName := AFieldName;
 end;
 
 { TAttrDBTable }

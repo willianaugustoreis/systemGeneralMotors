@@ -1,4 +1,4 @@
-unit uSocketServidor;
+Ôªøunit uSocketServidor;
 
 interface
 uses
@@ -44,7 +44,7 @@ begin
 
   FSocket.OnConnect := SocketConnect;
 
-  // GBP: n„o pode usar o TIdSchedulerOfThreadPool, ele tr·va se as conexıes dos clientes forem fechadas muito rapidamente
+  // GBP: n√£o pode usar o TIdSchedulerOfThreadPool, ele tr√°va se as conex√µes dos clientes forem fechadas muito rapidamente
   // FSocket.Scheduler := TIdSchedulerOfThreadPool.Create(nil);
   // TIdSchedulerOfThreadPool(FSocket.Scheduler).PoolSize := 20;
   FSocket.Active := True;

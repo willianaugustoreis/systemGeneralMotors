@@ -9,6 +9,9 @@ type
   {$RTTI INHERIT}
   {$M+}
   TCustomBase = class
+  protected
+  FTableName: string;
+  public
     function GetTableName: string;
   end;
 
@@ -90,6 +93,7 @@ var
   LCondition: string;
   LIsFirstCon: Boolean;
 begin
+  LIsFirstCon := True;
   Result := 'delete from ' + GetTableName;
   LCondition := ' ';
 
@@ -111,7 +115,7 @@ begin
         end
         else
         begin
-          LCondition := LCondition + ', ' + TAttrDBPrimaryKey(LCustomAttribute).PrimaryKey + ' = :' + LCondition + TAttrDBPrimaryKey(LCustomAttribute).PrimaryKey;
+          LCondition := LCondition + ' AND ' + TAttrDBPrimaryKey(LCustomAttribute).PrimaryKey + ' = :' + LCondition + TAttrDBPrimaryKey(LCustomAttribute).PrimaryKey;
         end;
         Break;
       end;
@@ -232,7 +236,6 @@ var
   LRttiContext: TRttiContext;
   LRttiType: TRttiType;
   LCustomAttribute: TCustomAttribute;
-  LRttiField: TRttiField;
 begin
   Result := '';
   try
