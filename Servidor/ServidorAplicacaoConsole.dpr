@@ -14,7 +14,9 @@ uses
   uMySqlDBConnection in 'BancoDeDados\uMySqlDBConnection.pas',
   uConfiguracao in 'Cofigurações\uConfiguracao.pas',
   Unit1 in 'Unit1.pas' {Form1},
-  uHelperLogger in '..\Shared\HelperLog\uHelperLogger.pas';
+  uHelperLogger in '..\Shared\HelperLog\uHelperLogger.pas',
+  uCustomDispatcher in '..\Shared\uCustomDispatcher.pas',
+  uRouterDispatcher in 'uRouterDispatcher.pas';
 
 procedure teste;
 var

@@ -3,7 +3,7 @@
 interface
 uses
   IdTCPServer, IdContext, IdCompressionIntercept, IdComponent, IdGlobal, IdStack,
-  Classes, IdException, IdExceptionCore;
+  Classes, IdException, IdExceptionCore, uRouterDispatcher;
 
 type
   TSocketServidor = class(TObject)
@@ -146,14 +146,13 @@ var
   LStreamResponse: TMemoryStream;
   LStringStream: TStringStream;
   LResponse: TMemoryStream;
-//  LRouter: TRouter;
+  LRouter: TRouterDispatcher;
 begin
   LStreamCliente := nil;
   LStringStream := nil;
   LStreamResponse := nil;
   LResponse := nil;
 
-//  LRouter := TRouter.Create;
   try
   try
     if not FAtiva then
@@ -167,7 +166,7 @@ begin
       Exit;
 
     LStreamCliente.Position := 0;
-//    LRouter.Process(LStreamCliente, LStreamResponse);
+    LRouter.RouterProcessMessage(LStreamCliente, LStreamResponse);
     SendStream(AContext, LStreamResponse, False);
 
   except
@@ -183,7 +182,7 @@ begin
     end;
   end;
   finally
-//    FreeAndNil(LRouter);
+    FreeAndNil(LRouter);
     if Assigned(LStreamCliente) then
       FreeAndNil(LStreamCliente);
 
