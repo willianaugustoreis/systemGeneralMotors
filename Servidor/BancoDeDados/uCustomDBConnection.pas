@@ -3,9 +3,16 @@ unit uCustomDBConnection;
 interface
 
 type
+
+  TDBConnetions = (
+    dbcAdoConnection,
+    dbcMySQL
+  );
+
   TCustomDBConnection = class
   strict private
-    procedure ConnectDataBase; virtual;abstract;
+  protected
+    procedure ConnectDataBase; virtual; abstract;
   protected
     FHostName: string;
     FDataBaseName: string;
@@ -18,7 +25,5 @@ type
     property HostName: string read FHostName write FHostName;
   end;
 implementation
-
-
 
 end.

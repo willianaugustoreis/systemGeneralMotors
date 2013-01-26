@@ -4,6 +4,7 @@ program ServidorAplicacaoConsole;
 
 uses
   SysUtils,
+  Windows,
   uSocketServidor in 'Comunicacao\uSocketServidor.pas',
   uAtributosClasse in '..\Shared\Estrutura\uAtributosClasse.pas',
   uCustomHeader in '..\Shared\Estrutura\uCustomHeader.pas',
@@ -13,19 +14,22 @@ uses
   uCustomDBConnection in 'BancoDeDados\uCustomDBConnection.pas',
   uMySqlDBConnection in 'BancoDeDados\uMySqlDBConnection.pas',
   uConfiguracao in 'Cofigurações\uConfiguracao.pas',
-  Unit1 in 'Unit1.pas' {Form1},
   uHelperLogger in '..\Shared\HelperLog\uHelperLogger.pas',
   uCustomDispatcher in '..\Shared\uCustomDispatcher.pas',
-  uRouterDispatcher in 'uRouterDispatcher.pas';
+  uRouterDispatcher in 'uRouterDispatcher.pas',
+  uAdoDBConection in 'BancoDeDados\uAdoDBConection.pas',
+  uPoolConnection in 'BancoDeDados\uPoolConnection.pas',
+  uCustomDBQuery in 'BancoDeDados\uCustomDBQuery.pas',
+  uAdoDBQuery in 'BancoDeDados\uAdoDBQuery.pas',
+  uRouter in 'Comunicacao\uRouter.pas';
 
 procedure teste;
 var
-  LConfiguracao: TConfiguracaoDataBase;
-  LConexao: TMySqlDBConnection;
+  LDBQuery: TAdoDBQuery;
 begin
-  LConfiguracao := TConfiguracaoDataBase.Create(carFileConfig);
+  ListaPool := TListPoolConection.Create;
   try
-  LConexao := TMySqlDBConnection.Create(LConfiguracao);
+  LDBQuery :=TAdoDBQuery.Create;
   except
     on e: Exception do
       HelperLogger.WriteInLog(tlError, E.Message);

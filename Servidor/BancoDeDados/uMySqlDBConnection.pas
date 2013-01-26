@@ -12,7 +12,6 @@ type
     procedure ConnectDataBase;
     public
       constructor Create(AConfiguracaoDB: TConfiguracaoDataBase);
-
   end;
 implementation
 

@@ -3,11 +3,12 @@ unit uCustomClass;
 interface
 uses
   Generics.Collections, uCustomHeader, RTTI, uAtributosClasse, Classes,
-  DBXJSON, DBXJSONReflect;
+  DBXJSON, DBXJSONReflect, uCustomDBQuery;
 
 type
   {$RTTI INHERIT}
   {$M+}
+
   TCustomBase = class
   protected
   FTableName: string;
@@ -15,37 +16,39 @@ type
     function GetTableName: string;
   end;
 
-  tdbquery=class
-
+  TMVCList<T: class, constructor> = class(TCustomBase)
+  FOwnerList: TObjectList<T>;
+  public
+    constructor Create;
   end;
+
   TCustomClass = class(TCustomBase)
   strict private
     FIsTransaction: Boolean;
-    FDMLQuery: TDBQuery;
+    FDMLQuery: TCustomDBQuery;
     FMar: TJSONMarshal;  //Serializer
     FUnMar: TJSONUnMarshal;
     function GenerateInsertSQL: string;
     function GenerateUpdateSQL: string;
     function GenerateDeleteSQL: string;
 
-    procedure Insert(AQuery: TDBQuery);
-    procedure Update(AQuery: TDBQuery);
-    procedure Delete(AQuery: TDBQuery);
+    procedure Insert(AQuery: TCustomDBQuery);
+    procedure Update(AQuery: TCustomDBQuery);
+    procedure Delete(AQuery: TCustomDBQuery);
 
 
-    procedure InitializeDMLQuery(AQueryTransaction: TDBQuery);
-    procedure FinalizeDMLQuery(var AQueryTransaction: TDBQuery);
+    procedure InitializeDMLQuery(AQueryTransaction: TCustomDBQuery);
+    procedure FinalizeDMLQuery(var AQueryTransaction: TCustomDBQuery);
   public
     constructor Create;
     destructor Destroy;
-    procedure Save(AQuery: TDBQuery);
+    procedure Save(AQuery: TCustomDBQuery);
 
     function ToStream: TMemoryStream;
     procedure PaserStream(AMemoryStream: TMemoryStream);
 
     function ToJson: TJSONObject;
     procedure ParseJson(AJson: TJSONObject);
-
   end;
 
 implementation
@@ -62,7 +65,7 @@ begin
   FIsTransaction:= False;
 end;
 
-procedure TCustomClass.Delete(AQuery: TDBQuery);
+procedure TCustomClass.Delete(AQuery: TCustomDBQuery);
 begin
   GenerateDeleteSQL;
 end;
@@ -73,7 +76,7 @@ begin
   FreeAndNil(FUnMar);
 end;
 
-procedure TCustomClass.FinalizeDMLQuery(var AQueryTransaction: TDBQuery);
+procedure TCustomClass.FinalizeDMLQuery(var AQueryTransaction: TCustomDBQuery);
 begin
   if not FIsTransaction then
   begin
@@ -251,7 +254,7 @@ begin
   end;
 end;
 
-procedure TCustomClass.InitializeDMLQuery(AQueryTransaction: TDBQuery);
+procedure TCustomClass.InitializeDMLQuery(AQueryTransaction: TCustomDBQuery);
 begin
   FIsTransaction := AQueryTransaction <> nil;
   if FIsTransaction then
@@ -263,7 +266,7 @@ begin
   end;
 end;
 
-procedure TCustomClass.Insert;
+procedure TCustomClass.Insert(AQuery: TCustomDBQuery);
 begin
   GenerateInsertSQL;
 end;
@@ -321,7 +324,7 @@ begin
   end;
 end;
 
-procedure TCustomClass.Save(AQuery: TDBQuery);
+procedure TCustomClass.Save(AQuery: TCustomDBQuery);
 begin
 
 end;
@@ -379,9 +382,18 @@ begin
   end;
 end;
 
-procedure TCustomClass.Update;
+procedure TCustomClass.Update(AQuery: TCustomDBQuery);
 begin
   GenerateUpdateSQL;
+end;
+
+{ TMVCList<T> }
+
+constructor TMVCList<T>.Create;
+begin
+  FOwnerList := TObjectList<T>.Create;
+//  T.Create;
+  FOwnerList.Add(T);
 end;
 
 end.
