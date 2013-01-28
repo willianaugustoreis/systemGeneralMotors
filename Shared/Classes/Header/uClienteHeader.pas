@@ -3,11 +3,13 @@ unit uClienteHeader;
 interface
 
 uses
-  uCustomHeader, uAtributosClasse;
+  uAtributosClasse, uCustomMVC;
 
 type
+  {$RTTI INHERIT}
+  {$M+}
   [TAttrDBTable('CLIENTE')]
-  TClienteHeader = class(TCustomHeader)
+  TClienteHeader = class(TCustomMVC)
   protected
   [TAttrDBField('ID')]
   FId: integer;
@@ -15,6 +17,10 @@ type
   FNome: string;
   [TAttrDBField('ENDERECO')]
   FEndereco: string;
+  public
+    property Id: Integer read FId write FId;
+    property Nome: string read FNome write FNome;
+    property Enredeco: string read FEndereco write FEndereco;
   end;
 implementation
 

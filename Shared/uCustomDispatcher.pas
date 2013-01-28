@@ -3,7 +3,7 @@ unit uCustomDispatcher;
 interface
 
 uses
-  Classes, RTTI;
+  Classes, RTTI, uCustomClass, uDomains;
 
 type
   TDispatcherType =(
@@ -54,21 +54,34 @@ end;
 {$IFDEF SERVIDOR}
 procedure TCustomDispatcher.ProcessMessage(ARequest, AResponse: TMemoryStream);
 var
-  LClass: string;
-  LMethod: string;
-  Info : TRttiType;
-  Meth : TRttiMethod;
-  Param : TArray<TValue>;
+  LRttiInfo : TRttiType;
+  LParam : TArray<TValue>;
   Result : TValue;
-  AnyClass : TClass;
   LRttiContext:TRttiContext;
+  LController, LMethod: TString50;
+  LRttiMethod: TRttiMethod;
+  LCustomClass: TCustomClass;
 begin
+  ARequest.Position := 0;
+  ARequest.Read(LController, SizeOf(LController));
+  ARequest.Read(LMethod, SizeOf(LMethod));
+
   LRttiContext := TRttiContext.Create;
-  Info := LRttiContext.GetType(AnyClass);
-  Meth := Info.GetMethod('AMethod');
-  Setlength(Param, 1);
-  Param[0] := TValue.From<Integer>(11);
-  Result := Meth.Invoke(AnyClass, Param);
+
+  if MVClist.TryGetValue(LController, LCustomClass) then
+  begin
+    LRttiInfo := LRttiContext.GetType(LCustomClass.ClassType);
+    for LRttiMethod in LRttiInfo.GetMethods do
+    begin
+      if LRttiMethod.Name <> LMethod then
+        Continue;
+
+        LCustomClass.PaserStream(ARequest);
+        LRttiMethod.Invoke(LCustomClass, LParam);
+    end;
+  end;
+
+
 end;
 {$ENDIF}
 end.

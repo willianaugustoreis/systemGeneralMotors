@@ -22,12 +22,7 @@ type
   end;
 
   TAttrDBPrimaryKey = class(TCustomAttribute)
-  strict private
-  FPrimaryKey: string;
-  public
-    constructor Create(APrimaryKey: string);
 
-    property PrimaryKey: string read FPrimaryKey;
   end;
 implementation
 
@@ -43,13 +38,6 @@ end;
 constructor TAttrDBTable.Create(ATableName: string);
 begin
   FTableName := ATableName
-end;
-
-{ TAttrDBPrimaryKey }
-
-constructor TAttrDBPrimaryKey.Create(APrimaryKey: string);
-begin
-  FPrimaryKey := APrimaryKey;
 end;
 
 end.

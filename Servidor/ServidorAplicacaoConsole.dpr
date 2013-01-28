@@ -5,6 +5,8 @@ program ServidorAplicacaoConsole;
 uses
   SysUtils,
   Windows,
+  Generics.Collections,
+  classes,
   uSocketServidor in 'Comunicacao\uSocketServidor.pas',
   uAtributosClasse in '..\Shared\Estrutura\uAtributosClasse.pas',
   uCustomHeader in '..\Shared\Estrutura\uCustomHeader.pas',
@@ -21,19 +23,40 @@ uses
   uPoolConnection in 'BancoDeDados\uPoolConnection.pas',
   uCustomDBQuery in 'BancoDeDados\uCustomDBQuery.pas',
   uAdoDBQuery in 'BancoDeDados\uAdoDBQuery.pas',
-  uRouter in 'Comunicacao\uRouter.pas';
+  uRouter in 'Comunicacao\uRouter.pas',
+  superobject in '..\superobject.pas',
+  uCustomMVC in 'MVC\uCustomMVC.pas',
+  uDomains in '..\Shared\uDomains.pas';
 
-procedure teste;
+procedure Teste;
 var
-  LDBQuery: TAdoDBQuery;
+  LCliente: TClienteClass;
+  LStream, LResponse: TMemorystream;
+  LRouter: TCustomDispatcher;
+  LClassController, LMethod: Tstring50;
+//  LControllerTClienteClass: TControllerTClienteClass;
 begin
+  LRouter := TCustomDispatcher.Create;
+//  LControllerTClienteClass := TControllerTClienteClass.Create;
+
   ListaPool := TListPoolConection.Create;
-  try
-  LDBQuery :=TAdoDBQuery.Create;
-  except
-    on e: Exception do
-      HelperLogger.WriteInLog(tlError, E.Message);
-  end;
+  MVCList := TDictionary<string,TCustomClass>.Create;
+//  MVCList.Add(LCliente.ClassName, LControllerTClienteClass);
+
+  LCliente := TClienteClass.Create;
+  LCliente.Id := -1;
+  LCliente.Nome := 'Tesste';
+  LCliente.Enredeco := 'TE';
+  LStream := TMemoryStream.Create;
+  LResponse := TMemoryStream.Create;
+  LClassController := 'TController'+LCliente.ClassName;
+
+  LStream.Write(LClassController, SizeOf(LClassController));
+  LMethod:='SaveObject';
+  LStream.Write(LMethod, SizeOf(LMethod));
+  LCliente.ToStream(LStream);
+
+  LRouter.ProcessMessage(LStream,LResponse);
 end;
 
 begin

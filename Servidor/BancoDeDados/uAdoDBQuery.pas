@@ -19,7 +19,7 @@ var
 begin
   LItem := nil;
   ListaPool.GetDBPoolByThreadId(Windows.GetCurrentThreadId(), LItem);
-  if LItem = nil then
+  if LItem = nil then                                                    {falta identificar o tipo de banco via config}
     ListaPool.CreateNewConnectionOnThePool(Windows.GetCurrentThreadId(), dbcAdoConnection, LItem);
 
   FCustomDBConnection := LItem.Connection;
